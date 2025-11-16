@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nino's Article Reader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Styles preserved -->
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --text: #111111;
+      --muted: #666666;
+      --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.1);
+      --border: #e2e2e2;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #050816;
+        --card-bg: #0f172a;
+        --text: #f9fafb;
+        --muted: #9ca3af;
+        --accent: #3b82f6;
+        --accent-soft: rgba(59, 130, 246, 0.18);
+        --border: #1f2937;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1d4ed8 0, var(--bg) 50%);
+      min-height: 100vh;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .app { width: 100%; max-width: 480px; }
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px 18px 18px;
+      box-shadow: 0 18px 35px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(148, 163, 184, 0.15);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .title-group { display: flex; flex-direction: column; gap: 2px; }
+    h1 { margin: 0; font-size: 1.1rem; letter-spacing: 0.03em; text-transform: uppercase; }
+    .subtitle { font-size: 0.8rem; color: var(--muted); }
+    .pill {
+      font-size: 0.7rem;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+    label { font-size: 0.8rem; color: var(--muted); display: block; margin-bottom: 4px; }
+    .field { margin-bottom: 14px; }
+    input[type="url"], select {
+      width: 100%; padding: 12px 12px; border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.02);
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      appearance: none;
+    }
+    input[type="url"]::placeholder { color: #9ca3af; }
+    input[type="url"]:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35);
+      background: rgba(15, 23, 42, 0.04);
+    }
+    .select-wrapper { position: relative; }
+    .select-wrapper::after {
+      content: "▾"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      font-size: 0.7rem; pointer-events: none; color: var(--muted);
+    }
+    .buttons { margin-top: 10px; }
+    button {
+      width: 100%; border-radius: 999px; border: none; padding: 12px;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      background: var(--accent); color: white;
+      display: flex; justify-content: center; align-items: center;
+      gap: 6px;
+    }
+    button:active { transform: translateY(1px) scale(0.99); }
+    .helper-row {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 8px; margin-top: 6px;
+    }
+    .hint { font-size: 0.75rem; color: var(--muted); }
+    .toggle-row { display: flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--muted); }
+    .toggle-row input { width: 32px; height: 18px; }
+    .footer-note { margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 0.7rem; color: var(--muted); line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+      <div class="card-header">
+        <div class="title-group">
+          <h1>Nino's Article Reader</h1>
+          <div class="subtitle">Mobile-friendly frontend</div>
+        </div>
+        <div class="pill">Personal · Educational</div>
+      </div>
+
+      <form id="archiveForm">
+        <div class="field">
+          <label for="targetUrl">Article to Open</label>
+          <input id="targetUrl" name="targetUrl" type="url" placeholder="https://example.com/article" required />
+        </div>
+
+        <div class="field">
+          <label for="mirrorSelect">Archive.today mirror</label>
+          <div class="select-wrapper">
+            <select id="mirrorSelect" name="mirrorSelect">
+              <option value="https://archive.today">archive.today</option>
+              <option value="https://archive.is">archive.is</option>
+              <option value="https://archive.ph" selected>archive.ph</option>
+              <option value="https://archive.ps">archive.ps</option>
+              <option value="https://archive.vn">archive.vn</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button type="submit" class="btn-primary">📌 Unlock </button>
+        </div>
+
+        <div class="helper-row">
+          <p class="hint">Paste any public URL. This will redirect to unlock.</p>
+          <label class="toggle-row">
+            <input type="checkbox" id="newTabToggle" checked />
+            <span>Open in new tab</span>
+          </label>
+        </div>
+      </form>
+
+      <div class="footer-note">
+        This interface constructs URLs. No data is stored. Works best with a VPN.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const form = document.getElementById("archiveForm");
+      const urlInput = document.getElementById("targetUrl");
+      const mirrorSelect = document.getElementById("mirrorSelect");
+      const newTabToggle = document.getElementById("newTabToggle");
+
+      function normalizeUrl(raw) {
+        if (!raw) return "";
+        const trimmed = raw.trim();
+        if (/^https?:\/\//i.test(trimmed)) return trimmed;
+        return "https://" + trimmed;
+      }
+
+      function openArchive() {
+        const raw = urlInput.value;
+        const normalized = normalizeUrl(raw);
+        if (!normalized) return;
+
+        const mirror = mirrorSelect.value.replace(/\/+$/, "");
+        const target = mirror + "/?run=1&url=" + encodeURIComponent(normalized);
+
+        if (newTabToggle.checked) {
+          window.open(target, "_blank", "noopener,noreferrer");
+        } else {
+          window.location.href = target;
+        }
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        openArchive();
+      });
+    })();
+  </script>
+</body>
+</html>
